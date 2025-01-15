@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-class CustomTextForm extends StatelessWidget {
+class CustomTextFormAdd extends StatelessWidget {
   final String hinttext;
   final TextEditingController mycontroller ;
   final String? Function(String?)? validator;
-  const CustomTextForm({super.key, required this.hinttext, required this.mycontroller, this.validator});
+  const CustomTextFormAdd({super.key, required this.hinttext, required this.mycontroller, this.validator});
 
 
   @override
@@ -13,7 +13,7 @@ class CustomTextForm extends StatelessWidget {
       validator: validator,
       controller: mycontroller,
       decoration: InputDecoration(
-          hintText: "Enter Your Email",
+          hintText: hinttext,
           hintStyle: TextStyle(fontSize: 14, color: Colors.grey),
           contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 20),
           filled: true,
