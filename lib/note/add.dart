@@ -1,34 +1,37 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:courseapp/components/custombuttonauth.dart';
 import 'package:courseapp/components/customtextfieldadd.dart';
+import 'package:courseapp/note/view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class EditCategory extends StatefulWidget {
+class AddNote extends StatefulWidget {
   final String docid;
-  final String oldname;
-  const EditCategory({super.key, required this.docid, required this.oldname});
+  const AddNote({super.key, required this.docid});
 
   @override
-  State<EditCategory> createState() => _EditCategoryState();
+  State<AddNote> createState() => _AddNoteState();
 }
 
-class _EditCategoryState extends State<EditCategory> {
+class _AddNoteState extends State<AddNote> {
   GlobalKey<FormState> formState = GlobalKey<FormState>();
-  TextEditingController name = TextEditingController();
+  TextEditingController note = TextEditingController();
   bool isLoading = false;
 
-  CollectionReference categories =
-      FirebaseFirestore.instance.collection('categories');
-
-  editCategory() async {
+  addNote() async {
+    CollectionReference collectionNote = FirebaseFirestore.instance
+        .collection('categories')
+        .doc(widget.docid)
+        .collection("note");
     if (formState.currentState!.validate()) {
       try {
         isLoading = true;
         setState(() {});
-        await categories.doc(widget.docid).set({"name": name.text}, SetOptions(merge: true));
-        Navigator.of(context)
-            .pushNamedAndRemoveUntil("homepage", (route) => false);
+        DocumentReference response = await collectionNote.add(
+            {"name": note.text, "id": FirebaseAuth.instance.currentUser!.uid});
+        Navigator.of(context).push(
+            MaterialPageRoute(
+                builder: (context) => NoteView(categoryid: widget.docid)));
       } catch (e) {
         isLoading = false;
         setState(() {});
@@ -38,16 +41,16 @@ class _EditCategoryState extends State<EditCategory> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    name.text = widget.oldname;
+  void dispose() {
+    note.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Category"),
+        title: Text("Add Note"),
       ),
       body: isLoading
           ? Center(
@@ -60,8 +63,8 @@ class _EditCategoryState extends State<EditCategory> {
                   child: Column(
                     children: [
                       CustomTextFormAdd(
-                        hinttext: "Enter Name",
-                        mycontroller: name,
+                        hinttext: "Enter Note",
+                        mycontroller: note,
                         validator: (val) {
                           if (val == "") {
                             return "Can't To Be Empty";
@@ -72,9 +75,9 @@ class _EditCategoryState extends State<EditCategory> {
                         height: 10,
                       ),
                       CusttomButtonAuth(
-                        title: "Save",
+                        title: "Add",
                         onPresed: () {
-                          editCategory();
+                          addNote();
                         },
                       ),
                     ],

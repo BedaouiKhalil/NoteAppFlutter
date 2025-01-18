@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
         "signup": (context) => SignUp(),
         "login": (context) => Login(),
         "homepage": (context) => HomePage(),
-        "addcategory": (context) => AddCategory(),
+        "addategory": (context) => AddCategory(),
       },
     );
   }
